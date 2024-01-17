@@ -3,8 +3,8 @@ import subprocess
 
 
 def main() -> None:
-    open_in_new_terminal("python3 chatroom/server.py"),
-    open_in_new_terminal("python3 chatroom/client.py"),
+    open_in_new_terminal("python3 chatroom/server.py")
+    open_in_new_terminal("python3 chatroom/client.py")
     open_in_new_terminal("python3 chatroom/client.py")
 
 
