@@ -1,4 +1,6 @@
 # Chat Room
+![MIT License](https://img.shields.io/github/license/JustKappaMan/Chat-Room)
+
 Chat room implementation in Python.
 ## License
 This project is licensed under the MIT license.
