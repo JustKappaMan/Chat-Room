@@ -5,7 +5,7 @@ from logger import Logger
 
 
 class ChatClient:
-    def __init__(self, host: str, port: int):
+    def __init__(self, host: str, port: int) -> None:
         self.logger = Logger("ChatClient").get()
 
         self.buffer_size = 1024
@@ -16,7 +16,7 @@ class ChatClient:
 
         self.logger.info(f"Connected to the server running on {host}:{port}")
 
-    def start(self):
+    def start(self) -> None:
         input_thread = threading.Thread(target=self._receive_messages)
         input_thread.start()
 
@@ -44,6 +44,6 @@ class ChatClient:
 
 
 if __name__ == "__main__":
-    port = int(input("Server port: "))
-    chat_client = ChatClient(socket.gethostname(), port)
+    server_port = int(input("Server port: "))
+    chat_client = ChatClient(socket.gethostname(), server_port)
     chat_client.start()

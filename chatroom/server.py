@@ -5,7 +5,7 @@ from logger import Logger
 
 
 class ChatServer:
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = Logger("ChatServer").get()
 
         self.clients = []
