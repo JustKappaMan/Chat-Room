@@ -12,12 +12,8 @@ class ChatServer:
         self.clients_lock = threading.Lock()
         self.buffer_size = 1024
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        self.host, self.port = socket.gethostname(), 0
-        self.socket.bind((self.host, self.port))
-        self.port = self.socket.getsockname()[1]
-
+        self.socket = socket.create_server((socket.gethostname(), 0), family=socket.AF_INET)
+        self.host, self.port = self.socket.getsockname()
         self.socket.listen()
 
         self.logger.info(f"Server started on {self.host}:{self.port}")

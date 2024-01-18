@@ -11,8 +11,7 @@ class ChatClient:
         self.buffer_size = 1024
         self.keep_running = True
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((host, port))
+        self.socket = socket.create_connection((host, port))
 
         self.logger.info(f"Connected to the server running on {host}:{port}")
 
@@ -32,13 +31,13 @@ class ChatClient:
         input_thread.join()
 
     def _send_message(self, message: str) -> None:
-        self.socket.sendall(message.encode("utf-8"))
+        self.socket.sendall(message.encode())
 
     def _receive_messages(self) -> None:
         while self.keep_running:
             try:
                 message = self.socket.recv(self.buffer_size)
-                print(message.decode("utf-8"))
+                print(message.decode())
             except (Exception,) as e:
                 self.logger.error(f"Exception while receiving message: {e}", exc_info=True)
 
