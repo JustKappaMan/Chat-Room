@@ -13,8 +13,11 @@ class ChatServer:
         self.buffer_size = 1024
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.host, self.port = socket.gethostname(), 12345
+
+        self.host, self.port = socket.gethostname(), 0
         self.socket.bind((self.host, self.port))
+        self.port = self.socket.getsockname()[1]
+
         self.socket.listen()
 
         self.logger.info(f"Server started on {self.host}:{self.port}")

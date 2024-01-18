@@ -41,5 +41,6 @@ class ChatClient:
 
 
 if __name__ == "__main__":
-    chat_client = ChatClient(socket.gethostname(), 12345)
+    port = int(input("Server port: "))
+    chat_client = ChatClient(socket.gethostname(), port)
     chat_client.start()
