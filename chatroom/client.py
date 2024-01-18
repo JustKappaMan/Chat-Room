@@ -1,12 +1,12 @@
 import socket
-import logging
 import threading
+
+from logger import Logger
 
 
 class ChatClient:
     def __init__(self, host: str, port: int):
-        logging.basicConfig(level=logging.INFO)
-        self.logger = logging.getLogger("ChatClient")
+        self.logger = Logger("ChatClient").get()
 
         self.buffer_size = 1024
 
@@ -36,7 +36,7 @@ class ChatClient:
                 message = self.socket.recv(self.buffer_size)
                 print(message.decode("utf-8"))
             except (Exception,) as e:
-                print(f"Exception while receiving message: {e}")
+                self.logger.error(f"Exception while receiving message: {e}", exc_info=True)
                 break
 
 

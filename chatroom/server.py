@@ -1,12 +1,12 @@
 import socket
-import logging
 import threading
+
+from logger import Logger
 
 
 class ChatServer:
     def __init__(self):
-        logging.basicConfig(level=logging.INFO)
-        self.logger = logging.getLogger("ChatServer")
+        self.logger = Logger("ChatServer").get()
 
         self.clients = []
         self.clients_lock = threading.Lock()
@@ -41,7 +41,7 @@ class ChatServer:
                 try:
                     client.sendall(message)
                 except (Exception,) as e:
-                    self.logger.error(f"Exception while broadcasting message: {e}")
+                    self.logger.error(f"Exception while broadcasting message: {e}", exc_info=True)
                     self._remove_client(client)
 
     def _handle_client(self, client: socket.socket) -> None:
@@ -51,7 +51,7 @@ class ChatServer:
                     break
                 self._broadcast(message, client)
             except (Exception,) as e:
-                self.logger.error(f"Exception while handling client: {e}")
+                self.logger.error(f"Exception while handling client: {e}", exc_info=True)
                 self._remove_client(client)
 
 
