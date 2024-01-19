@@ -16,11 +16,11 @@ class ChatServer:
 
         self.socket = socket.create_server((socket.gethostname(), 0), family=socket.AF_INET)
         self.host, self.port = self.socket.getsockname()
-        self.socket.listen()
-
-        self.logger.info(f"Server started on {self.host}:{self.port}")
 
     def start(self) -> None:
+        self.socket.listen()
+        self.logger.info(f"Server started on {self.host}:{self.port}")
+
         while True:
             client, address = self.socket.accept()
             self.logger.info(f"Connection from {address} has been established!")
