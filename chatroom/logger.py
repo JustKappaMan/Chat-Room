@@ -2,6 +2,8 @@ import logging
 
 
 class Logger:
+    __slots__ = ("logger",)
+
     def __init__(self, name: str):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.INFO)

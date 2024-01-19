@@ -5,6 +5,8 @@ from logger import Logger
 
 
 class ChatServer:
+    __slots__ = ("logger", "clients", "clients_lock", "buffer_size", "socket", "host", "port")
+
     def __init__(self) -> None:
         self.logger = Logger("ChatServer").get()
 
