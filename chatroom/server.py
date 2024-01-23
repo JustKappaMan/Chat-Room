@@ -11,11 +11,11 @@ class ChatroomServer:
         self.logger = Logger("ChatroomServer").get()
         self.host = host
         self.port = port
-        self.clients = []
+        self.clients = set()
         self.buffer_size = 1024
 
     async def handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
-        self.clients.append(writer)
+        self.clients.add(writer)
         self.logger.info(f"New client connected: {writer.get_extra_info('peername')}")
 
         while True:
