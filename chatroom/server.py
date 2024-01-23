@@ -14,7 +14,7 @@ class ChatroomServer:
         self.clients = set()
         self.buffer_size = 1024
 
-    async def handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+    async def _handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         self.clients.add(writer)
         self.logger.info(f"New client connected: {writer.get_extra_info('peername')}")
 
@@ -32,7 +32,7 @@ class ChatroomServer:
         writer.close()
 
     async def start(self) -> None:
-        async with (server := await asyncio.start_server(self.handle_client, self.host, self.port)):
+        async with (server := await asyncio.start_server(self._handle_client, self.host, self.port)):
             self.logger.info(f"Server started on {self.host}:{self.port}")
             await server.serve_forever()
 

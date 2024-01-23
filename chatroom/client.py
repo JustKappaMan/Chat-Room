@@ -19,13 +19,13 @@ class ChatroomClient:
         self.socket = socket.create_connection((self.host, self.port))
         self.logger.info(f"Connected to the server running on {self.host}:{self.port}")
 
-        input_thread = threading.Thread(target=self._receive_messages)
+        input_thread = threading.Thread(target=self._receive_data)
         input_thread.start()
 
         while self.keep_running:
             try:
                 msg = input().strip()
-                self._send_message(msg)
+                self._send_data(msg)
             except KeyboardInterrupt:
                 self.keep_running = False
 
@@ -33,10 +33,10 @@ class ChatroomClient:
         self.socket.close()
         input_thread.join()
 
-    def _send_message(self, message: str) -> None:
+    def _send_data(self, message: str) -> None:
         self.socket.sendall(message.encode())
 
-    def _receive_messages(self) -> None:
+    def _receive_data(self) -> None:
         while self.keep_running:
             try:
                 message = self.socket.recv(self.buffer_size)
