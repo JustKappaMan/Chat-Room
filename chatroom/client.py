@@ -4,20 +4,21 @@ import threading
 from logger import Logger
 
 
-class ChatClient:
-    __slots__ = ("logger", "buffer_size", "keep_running", "socket")
+class ChatroomClient:
+    __slots__ = ("logger", "host", "port", "socket", "buffer_size", "keep_running")
 
-    def __init__(self, host: str, port: int) -> None:
-        self.logger = Logger("ChatClient").get()
-
+    def __init__(self, host: str, port: int):
+        self.logger = Logger("ChatroomClient").get()
+        self.host = host
+        self.port = port
+        self.socket = None
         self.buffer_size = 1024
         self.keep_running = True
 
-        self.socket = socket.create_connection((host, port))
-
-        self.logger.info(f"Connected to the server running on {host}:{port}")
-
     def start(self) -> None:
+        self.socket = socket.create_connection((self.host, self.port))
+        self.logger.info(f"Connected to the server running on {self.host}:{self.port}")
+
         input_thread = threading.Thread(target=self._receive_messages)
         input_thread.start()
 
@@ -44,7 +45,11 @@ class ChatClient:
                 self.logger.error(f"Exception while receiving message: {e}", exc_info=True)
 
 
-if __name__ == "__main__":
+def main() -> None:
     server_port = int(input("Server port: "))
-    chat_client = ChatClient(socket.gethostname(), server_port)
+    chat_client = ChatroomClient(socket.gethostname(), server_port)
     chat_client.start()
+
+
+if __name__ == "__main__":
+    main()
