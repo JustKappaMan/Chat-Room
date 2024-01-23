@@ -1,61 +1,46 @@
 import socket
-import threading
+import asyncio
 
 from logger import Logger
 
 
-class ChatServer:
-    __slots__ = ("logger", "clients", "clients_lock", "buffer_size", "socket", "host", "port")
+class ChatroomServer:
+    __slots__ = ("logger", "host", "port", "clients", "buffer_size")
 
-    def __init__(self) -> None:
-        self.logger = Logger("ChatServer").get()
-
+    def __init__(self, host: str, port: int):
+        self.logger = Logger("ChatroomServer").get()
+        self.host = host
+        self.port = port
         self.clients = []
-        self.clients_lock = threading.Lock()
         self.buffer_size = 1024
 
-        self.socket = socket.create_server((socket.gethostname(), 0), family=socket.AF_INET)
-        self.host, self.port = self.socket.getsockname()
-
-    def start(self) -> None:
-        self.socket.listen()
-        self.logger.info(f"Server started on {self.host}:{self.port}")
+    async def handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        self.clients.append(writer)
+        self.logger.info(f"New client connected: {writer.get_extra_info('peername')}")
 
         while True:
-            client, address = self.socket.accept()
-            self.logger.info(f"Connection from {address} has been established!")
+            if not (data := await reader.read(self.buffer_size)):
+                break
 
-            with self.clients_lock:
-                self.clients.append(client)
+            for client in self.clients:
+                if client != writer:
+                    client.write(data)
+                    await client.drain()
 
-            thread = threading.Thread(target=self._handle_client, args=(client,))
-            thread.start()
+        self.logger.info(f"Client disconnected: {writer.get_extra_info('peername')}")
+        self.clients.remove(writer)
+        writer.close()
 
-    def _remove_client(self, client: socket.socket) -> None:
-        with self.clients_lock:
-            client.close()
-            self.clients.remove(client)
+    async def start(self) -> None:
+        async with (server := await asyncio.start_server(self.handle_client, self.host, self.port)):
+            self.logger.info(f"Server started on {self.host}:{self.port}")
+            await server.serve_forever()
 
-    def _broadcast(self, message: bytes, sender: socket.socket) -> None:
-        for client in self.clients:
-            if client != sender:
-                try:
-                    client.sendall(message)
-                except (Exception,) as e:
-                    self.logger.error(f"Exception while broadcasting message: {e}", exc_info=True)
-                    self._remove_client(client)
 
-    def _handle_client(self, client: socket.socket) -> None:
-        while True:
-            try:
-                if not (message := client.recv(self.buffer_size)):
-                    break
-                self._broadcast(message, client)
-            except (Exception,) as e:
-                self.logger.error(f"Exception while handling client: {e}", exc_info=True)
-                self._remove_client(client)
+async def main() -> None:
+    server = ChatroomServer(socket.gethostname(), 12345)
+    await server.start()
 
 
 if __name__ == "__main__":
-    chat_server = ChatServer()
-    chat_server.start()
+    asyncio.run(main())
