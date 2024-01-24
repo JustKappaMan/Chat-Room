@@ -14,7 +14,7 @@ class Logger:
         level: int = logging.INFO,
         pattern: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         log_to_file: bool = False,
-        log_to_console: bool = True,
+        log_to_console: bool = False,
     ):
         """
         Create a new `logging.Logger` and configure it according to the given parameters.

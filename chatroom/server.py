@@ -8,11 +8,11 @@ class ChatroomServer:
     __slots__ = ("logger", "host", "port", "clients", "buffer_size")
 
     def __init__(self, host: str, port: int):
-        self.logger = Logger("ChatroomServer").get()
+        self.logger = Logger("ChatroomServer", log_to_console=True).get()
         self.host = host
         self.port = port
         self.clients = set()
-        self.buffer_size = 1024
+        self.buffer_size = 4096
 
     async def _handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         self.clients.add(writer)
